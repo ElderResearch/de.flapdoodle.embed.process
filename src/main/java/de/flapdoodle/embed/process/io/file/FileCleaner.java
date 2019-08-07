@@ -47,7 +47,11 @@ public class FileCleaner {
 			cleanerThread.setDaemon(true);
 			cleanerThread.start();
 
-			Runtime.getRuntime().addShutdownHook(new Thread(new CleanerShutdownHook(cleaner)));
+			try {
+				Runtime.getRuntime().addShutdownHook(new Thread(new CleanerShutdownHook(cleaner)));
+			} catch (IllegalStateException e) {
+				logger.warn("Cannot add cleaner shutdown hook: {}", e.getMessage());
+			}
 		}
 
 		cleaner.forceDelete(fileOrDir);
